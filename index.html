@@ -2,8 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-<title>GestionProp</title>
+<title>GestionProp v2.5</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -253,15 +256,30 @@ function go(s){SEC=s;render();}
 
 // LOGIN
 function rLogin(){
-  var saved=ls("gp_rem",null);
-  if(saved){var f=USUARIOS.filter(function(x){return x.u===saved.u&&x.p===saved.p;})[0];if(f){doLogin(f);return;}}
+  // First load password overrides from Firebase, then check saved login
+  DB.ref("usuarios").once("value",function(snap){
+    if(snap.exists()){
+      var ov=snap.val();
+      USUARIOS.forEach(function(u){if(ov[u.u]&&ov[u.u].clave)u.p=ov[u.u].clave;});
+    }
+    var saved=ls("gp_rem",null);
+    if(saved){var f=USUARIOS.filter(function(x){return x.u===saved.u&&x.p===saved.p;})[0];if(f){doLogin(f);return;}}
+    mostrarFormLogin();
+  });
+}
+function mostrarFormLogin(){
   G("app").innerHTML="<div style='min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px'><div class='card' style='max-width:340px;width:100%;padding:28px'><div style='text-align:center;margin-bottom:22px'><div style='background:linear-gradient(135deg,#3B82F6,#8B5CF6);border-radius:12px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px'>GP</div><h1 style='font-size:20px;font-weight:800'>GestionProp</h1></div>"+fld("lu","Usuario")+fld("lp","Contrasena","","password")+"<label style='display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;background:#0F172A;border-radius:9px;border:1px solid #334155;margin-bottom:10px'><input type='checkbox' id='rem'/> <span style='font-size:12px'>Recordarme</span></label><div id='lerr' style='color:#EF4444;font-size:12px;margin-bottom:8px;display:none'>Usuario o clave incorrectos</div><button class='btn bp' onclick='tryLogin()' style='width:100%;padding:11px'>Ingresar</button></div></div>";
   G("lp").onkeydown=function(e){if(e.key==="Enter")tryLogin();};
 }
 function tryLogin(){
   var u=G("lu").value.trim(),p=G("lp").value;
   var f=USUARIOS.filter(function(x){return x.u===u&&x.p===p;})[0];
-  if(f){if(G("rem").checked)lw("gp_rem",{u:u,p:p});else lw("gp_rem",null);doLogin(f);}
+  if(f){
+    // Store only username for "remember me" - password loaded fresh from Firebase each time
+    if(G("rem")&&G("rem").checked) lw("gp_rem",{u:u,p:p});
+    else lw("gp_rem",null);
+    doLogin(f);
+  }
   else G("lerr").style.display="block";
 }
 function doLogin(u){USER=u;SEC=u.r==="admin"?"panel":"alertas";startDB();}
@@ -356,7 +374,7 @@ function rAcuerdos(){
   var iqA=oA(DATA.iq),udl=uds();
   var act=iqA.filter(function(i){return i.estado==="activo";}).length;
   var lib=udl.filter(function(u){return !iqA.filter(function(i){return i.unidad===u&&i.estado==="activo";}).length;}).length;
-  G("main").innerHTML="<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px'><div><h2 style='font-size:20px;font-weight:800'>Acuerdos Vigentes</h2><p style='color:#64748B;font-size:11px'>"+act+" activos - "+lib+" libres</p></div><div style='display:flex;gap:5px'><button class='btn bg bsm' onclick='_vD=!_vD;fAc()'>Deptos</button><button class='btn bp bsm' onclick='openNA()'>+ Nuevo</button><button class='btn bpu bsm' onclick='openAjusteCuat()'>Ajuste 4m</button></div></div><div style='display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap'><input class='inp' id='iq-q' placeholder='Buscar nombre, unidad, DNI, ID...' style='flex:1;min-width:160px' oninput='fAc()'/><select class='inp' id='iq-e' style='max-width:100px' onchange='fAc()'><option value=''>Todos</option>"+Object.keys(ED).map(function(k){return "<option>"+k+"</option>";}).join("")+"</select></div><div id='iq-list'></div>";
+  G("main").innerHTML="<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px'><div><h2 style='font-size:20px;font-weight:800'>Acuerdos Vigentes</h2><p style='color:#64748B;font-size:11px'>"+act+" activos - "+lib+" libres</p></div><div style='display:flex;gap:5px'><button class='btn bg bsm' onclick='_vD=!_vD;fAc()'>Deptos</button><button class='btn bp bsm' onclick='openNA()'>+ Nuevo</button><button class='btn bpu bsm' onclick='openAjusteCuat()'>Ajuste Alquileres</button></div></div><div style='display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap'><input class='inp' id='iq-q' placeholder='Buscar nombre, unidad, DNI, ID...' style='flex:1;min-width:160px' oninput='fAc()'/><select class='inp' id='iq-e' style='max-width:100px' onchange='fAc()'><option value=''>Todos</option>"+Object.keys(ED).map(function(k){return "<option>"+k+"</option>";}).join("")+"</select></div><div id='iq-list'></div>";
   fAc();
 }
 function fAc(){
@@ -1000,7 +1018,18 @@ function rAlertas(){
     if(dia===5&&!ok)als.push({l:"Tarifa full",c:"#3B82F6",u:inq.unidad,nom:inq.nombre,tel:inq.tel,msg:"Hola "+nom+"! Desde manana el monto es: "+fmt(inq.alquiler)+"\n\nAdm: 1555787641"});
     if(dia>=10&&!ok){var d=dia-10;als.push({l:"Mora",c:"#EF4444",u:inq.unidad,nom:inq.nombre,tel:inq.tel,msg:"Hola "+nom+". Tu alquiler esta en mora ("+d+" dia"+(d!==1?"s":"")+" de atraso). Se aplican punitorios segun tasa BCRA.\nAdm: 1555787641"});}
     if(inq.egreso){var dif=Math.round((new Date(inq.egreso)-h)/86400000);if(dif>=0&&dif<=15)als.push({l:"Vencimiento",c:"#F59E0B",u:inq.unidad,nom:inq.nombre,tel:inq.tel,msg:"Hola "+nom+"! Tu acuerdo vence el "+inq.egreso+" (en "+dif+" dia"+(dif!==1?"s":"")+"). Para renovar: "+fmt(inq.alquiler)+"\nAdm: 1555787641"});}
-    if(inq.ultimo_aj){var ua=new Date(inq.ultimo_aj),pr=new Date(ua);pr.setMonth(pr.getMonth()+4);var d2=Math.round((pr-h)/86400000);if(d2>=0&&d2<=15){var nv=inq.nuevo_alq||Math.round(inq.alquiler*1.12);als.push({l:"Ajuste",c:"#8B5CF6",u:inq.unidad,nom:inq.nombre,tel:inq.tel,msg:"Hola "+nom+"! Ajuste cuatrimestral: "+fmt(inq.alquiler)+" a "+fmt(nv)+". Aplica desde el dia 1. Adm: 1555787641"});}}
+    // Ajuste cuatrimestral: solo en Abril, Agosto y Diciembre (meses 4, 8, 12)
+    // Avisar los ultimos 15 dias del mes anterior
+    var mesN=h.getMonth()+1,diaN=h.getDate();
+    var esPreAj=(mesN===3||mesN===7||mesN===11)&&diaN>=16;
+    var esMesAj=(mesN===4||mesN===8||mesN===12)&&diaN<=15;
+    if(esPreAj||esMesAj){
+      var nv=inq.nuevo_alq||Math.round(inq.alquiler*1.12);
+      var mesesAj={4:"Abril",8:"Agosto",12:"Diciembre"};
+      var mesAjNombre=esMesAj?mesesAj[mesN]:mesesAj[mesN===3?4:mesN===7?8:12];
+      als.push({l:"Ajuste",c:"#8B5CF6",u:inq.unidad,nom:inq.nombre,tel:inq.tel,
+        msg:"Hola "+nom+"! El ajuste cuatrimestral de "+mesAjNombre+": "+fmt(inq.alquiler)+" a "+fmt(nv)+". Aplica desde el dia 1. Adm: 1555787641"});
+    }
   });
   window._als=als;
   var o="<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px'><div><h2 style='font-size:20px;font-weight:800'>Alertas WhatsApp</h2><p style='color:#64748B;font-size:11px'>Dia "+dia+" - "+als.length+" mensajes listos</p></div></div>";
@@ -1327,14 +1356,17 @@ function cerrarMes(){
 }
 
 function openSubc(){
-  var o="<p style='color:#94A3B8;font-size:12px;margin-bottom:12px'>Conta el dinero real en cada cuenta y registralo. El sistema muestra el saldo acumulado hasta hoy.</p>";
-  o+="<table class='tbl' style='margin-bottom:12px'><thead><tr><th>Cuenta</th><th>Segun sistema</th><th>Real contado $</th></tr></thead><tbody>";
+  var o="<div class='wbx' style='margin-bottom:12px;font-size:11px'>";
+  o+="<b>Instrucciones:</b> La columna <b>Calculado</b> muestra lo que deberia haber segun los movimientos registrados. ";
+  o+="Conta el dinero real de cada cuenta y escribilo en <b>Real contado</b>. Si hay diferencia queda registrada.";
+  o+="</div>";
+  o+="<table class='tbl' style='margin-bottom:12px'><thead><tr><th>Cuenta</th><th>Calculado (sistema)</th><th>Real contado $</th></tr></thead><tbody>";
   CTAS.forEach(function(cta){
     var sal=saldoAcumulado(cta,_cajaF,_cajaMes);
     if(sal!==0||true){
       o+="<tr><td style='font-weight:600'>"+cta+"</td>";
       o+="<td style='color:"+(sal>=0?"#10B981":"#EF4444")+";font-weight:700'>"+fmt(sal)+"</td>";
-      o+="<td><input class='inp' type='number' id='sc-"+cta.replace(/ /g,"-")+"' placeholder='"+sal+"' style='padding:4px 8px;font-size:12px'/></td></tr>";
+      o+="<td><input class='inp' type='number' id='sc-"+cta.replace(/ /g,"-")+"' placeholder='Ingresar monto real...' style='padding:4px 8px;font-size:12px'/></td></tr>";
     }
   });
   o+="</tbody></table>";
@@ -1347,7 +1379,7 @@ function saveSubc(){
   CTAS.forEach(function(cta){
     var sistema=saldoAcumulado(cta,_cajaF,_cajaMes);
     var inp=G("sc-"+cta.replace(/ /g,"-"));
-    var real=inp&&inp.value?Number(inp.value):sistema; // if empty, assume matches
+    var real=inp&&inp.value.trim()?Number(inp.value):sistema; // if empty, no difference
     var dif=real-sistema;
     saldos[cta]={sistema:sistema,real:real,dif:dif};
     // Register difference as adjustment only if non-zero
