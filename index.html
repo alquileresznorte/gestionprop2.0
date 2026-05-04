@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-<title>GestionProp v2.5</title>
+<title>GestionProp v2.6</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
@@ -72,89 +72,76 @@ var ED={
 var COL={R1:"#3B82F6",R2:"#8B5CF6",BN:"#F59E0B",LT:"#84CC16",SC:"#06B6D4",WT:"#10B981",RC:"#EF4444",LP:"#F97316",OT:"#6B7280"};
 var CTAS=["Efectivo","Bco Loli","Bco Hugo","MP Loli","MP Hugo","Visa Galicia Hugo","Master BBVA Hugo","Visa BBVA Hugo","Visa BBVA Loli","Master BBVA Loli"];
 var CTAP=["Cuenta Loli","Cuenta Hugo"];
-var CATC={Tarjetas:"#8B5CF6",Sueldos:"#10B981",Impuestos:"#EF4444",Electricidad:"#F59E0B",Gas:"#F97316",Agua:"#06B6D4",Administrativo:"#64748B",Salud:"#EC4899",Personal:"#84CC16",Seguros:"#14B8A6","Gastos bancarios":"#6366F1",Cable:"#3B82F6",Internet:"#3B82F6"};
+var CATC={Tarjetas:"#8B5CF6",Sueldos:"#10B981",ARBA:"#EF4444",ARCA:"#F43F5E",Municipal:"#FB923C",Electricidad:"#F59E0B",Gas:"#F97316",Agua:"#06B6D4",Administrativo:"#64748B",Salud:"#EC4899",Personal:"#84CC16",Seguros:"#14B8A6","Gastos bancarios":"#6366F1",Cable:"#3B82F6",Internet:"#3B82F6"};
 var CF=[
-  // PERSONAL / SUELDOS
   {id:"cf01",d:"Mantenimiento",pv:"Personal",e:"General",c:"Sueldos",ct:"",dv:5},
   {id:"cf02",d:"Administrativo",pv:"Personal",e:"General",c:"Sueldos",ct:"",dv:5},
-  // IMPUESTOS VEHICULOS
-  {id:"cf03",d:"Patente Corolla",pv:"ARBA",e:"General",c:"Impuestos",ct:"AF468SP",dv:15},
-  {id:"cf04",d:"Patente Ranger",pv:"ARBA",e:"General",c:"Impuestos",ct:"ag394lj",dv:15},
-  // CONTADORES
+  {id:"cf03",d:"Patente Corolla",pv:"ARBA",e:"General",c:"ARBA",ct:"AF468SP",dv:15},
+  {id:"cf04",d:"Patente Ranger",pv:"ARBA",e:"General",c:"ARBA",ct:"ag394lj",dv:15},
   {id:"cf05",d:"Contador Hugo",pv:"Contador",e:"General",c:"Administrativo",ct:"",dv:10},
   {id:"cf06",d:"Contador Loli",pv:"Contador",e:"General",c:"Administrativo",ct:"",dv:10},
-  // SALUD
   {id:"cf07",d:"Swiss Medical",pv:"Swiss Medical",e:"General",c:"Salud",ct:"",dv:10},
   {id:"cf08",d:"Galeno",pv:"Galeno",e:"General",c:"Salud",ct:"",dv:10},
-  // ARBA LOS PILARES
-  {id:"cf09",d:"ARBA Los Pilares",pv:"ARBA",e:"LP",c:"Impuestos",ct:"084-185249",dv:15},
-  // INTERNET / CABLE
-  {id:"cf10",d:"BN WiFi",pv:"Fibertel/Claro",e:"BN",c:"Internet",ct:"81004004181100-8",dv:17},
+  {id:"cf09",d:"ARBA Los Pilares",pv:"ARBA",e:"LP",c:"ARBA",ct:"084-185249",dv:15},
+  {id:"cf10",d:"BN WiFi",pv:"Fibertel",e:"BN",c:"Internet",ct:"81004004181100-8",dv:17},
   {id:"cf11",d:"BN Cable",pv:"Cablevision",e:"BN",c:"Cable",ct:"81004004181100-9",dv:17},
   {id:"cf12",d:"R1 Cable",pv:"Cablevision",e:"R1",c:"Cable",ct:"81004004181100-6",dv:17},
-  {id:"cf13",d:"R1 WiFi",pv:"Fibertel/Claro",e:"R1",c:"Internet",ct:"81004004181100-2",dv:17},
+  {id:"cf13",d:"R1 WiFi",pv:"Fibertel",e:"R1",c:"Internet",ct:"81004004181100-2",dv:17},
   {id:"cf14",d:"R2 Cable",pv:"Cablevision",e:"R2",c:"Cable",ct:"81004004181100-3",dv:17},
-  {id:"cf15",d:"R2 WiFi",pv:"Fibertel/Claro",e:"R2",c:"Internet",ct:"81004004181100-4",dv:17},
+  {id:"cf15",d:"R2 WiFi",pv:"Fibertel",e:"R2",c:"Internet",ct:"81004004181100-4",dv:17},
   {id:"cf16",d:"R2 Cable wifi",pv:"Cablevision",e:"R2",c:"Cable",ct:"81004004181100-7",dv:17},
   {id:"cf17",d:"RC Cable wifi",pv:"Cablevision",e:"RC",c:"Cable",ct:"81004004181100-5",dv:17},
   {id:"cf18",d:"WT Cable wifi",pv:"Cablevision",e:"WT",c:"Cable",ct:"81004004181100-0",dv:17},
-  {id:"cf19",d:"LT personal y flow",pv:"Flow",e:"LT",c:"Cable",ct:"100304739771000-5",dv:17},
-  // EDENOR
-  {id:"cf20",d:"EDENOR SC",pv:"EDENOR",e:"SC",c:"Electricidad",ct:"1675713877",dv:15},
-  {id:"cf21",d:"EDENOR RC Panama",pv:"EDENOR",e:"RC",c:"Electricidad",ct:"6122449133",dv:15},
-  {id:"cf22",d:"EDENOR RC",pv:"EDENOR",e:"RC",c:"Electricidad",ct:"2753864187",dv:15},
-  {id:"cf23",d:"EDENOR R1",pv:"EDENOR",e:"R1",c:"Electricidad",ct:"174064S437",dv:15},
-  {id:"cf24",d:"EDENOR R2",pv:"EDENOR",e:"R2",c:"Electricidad",ct:"6914278698",dv:15},
-  {id:"cf25",d:"EDENOR BN",pv:"EDENOR",e:"BN",c:"Electricidad",ct:"1441920426",dv:15},
-  {id:"cf26",d:"EDENOR 1 WT",pv:"EDENOR",e:"WT",c:"Electricidad",ct:"3348321514",dv:15},
-  {id:"cf27",d:"EDENOR 2 WT Galpon",pv:"EDENOR",e:"WT",c:"Electricidad",ct:"2129892138",dv:15},
-  {id:"cf28",d:"EDENOR LT",pv:"EDENOR",e:"LT",c:"Electricidad",ct:"7616030669",dv:15},
-  // GAS (Naturgy)
-  {id:"cf29",d:"Naturgy WT",pv:"Naturgy",e:"WT",c:"Gas",ct:"416400/3",dv:15},
-  {id:"cf30",d:"Naturgy R1",pv:"Naturgy",e:"R1",c:"Gas",ct:"1564731/6",dv:15},
-  {id:"cf31",d:"Naturgy BN",pv:"Naturgy",e:"BN",c:"Gas",ct:"2531702/7",dv:15},
-  {id:"cf32",d:"Naturgy SC",pv:"Naturgy",e:"SC",c:"Gas",ct:"816834/9",dv:15},
-  {id:"cf33",d:"Naturgy LT",pv:"Naturgy",e:"LT",c:"Gas",ct:"817163/4",dv:15},
-  // AySA
-  {id:"cf34",d:"AySA WT",pv:"AySA",e:"WT",c:"Agua",ct:"2239047",dv:15},
-  {id:"cf35",d:"AySA RC",pv:"AySA",e:"RC",c:"Agua",ct:"2250480",dv:15},
-  {id:"cf36",d:"AySA BN",pv:"AySA",e:"BN",c:"Agua",ct:"2007659",dv:15},
-  {id:"cf37",d:"AySA R2",pv:"AySA",e:"R2",c:"Agua",ct:"2250861",dv:15},
-  {id:"cf38",d:"AySA R1",pv:"AySA",e:"R1",c:"Agua",ct:"2242016",dv:15},
-  {id:"cf39",d:"AySA SC",pv:"AySA",e:"SC",c:"Agua",ct:"320245",dv:15},
-  {id:"cf40",d:"AySA LT",pv:"AySA",e:"LT",c:"Agua",ct:"",dv:15},
-  // MUNICIPALES
-  {id:"cf41",d:"Municipal WT",pv:"Municipalidad",e:"WT",c:"Impuestos",ct:"530783",dv:15},
-  {id:"cf42",d:"Municipal BN",pv:"Municipalidad",e:"BN",c:"Impuestos",ct:"551919",dv:15},
-  {id:"cf43",d:"Municipal RC",pv:"Municipalidad",e:"RC",c:"Impuestos",ct:"650840",dv:15},
-  {id:"cf44",d:"Municipal R2",pv:"Municipalidad",e:"R2",c:"Impuestos",ct:"533175",dv:15},
-  {id:"cf45",d:"Municipal R1",pv:"Municipalidad",e:"R1",c:"Impuestos",ct:"530353",dv:15},
-  {id:"cf46",d:"Municipal LT",pv:"Municipalidad",e:"LT",c:"Impuestos",ct:"205848",dv:15},
-  {id:"cf47",d:"Municipal SC",pv:"Municipalidad",e:"SC",c:"Impuestos",ct:"30699",dv:15},
-  // ARBA EDIFICIOS
-  {id:"cf48",d:"ARBA SC",pv:"ARBA",e:"SC",c:"Impuestos",ct:"047-090699-5",dv:15},
-  {id:"cf49",d:"ARBA WT",pv:"ARBA",e:"WT",c:"Impuestos",ct:"110-060375-2",dv:15},
-  {id:"cf50",d:"ARBA R1",pv:"ARBA",e:"R1",c:"Impuestos",ct:"110-102484-5",dv:15},
-  {id:"cf51",d:"ARBA R2",pv:"ARBA",e:"R2",c:"Impuestos",ct:"110-060840-1",dv:15},
-  {id:"cf52",d:"ARBA RC",pv:"ARBA",e:"RC",c:"Impuestos",ct:"110-025743-9",dv:15},
-  {id:"cf53",d:"ARBA BN",pv:"ARBA",e:"BN",c:"Impuestos",ct:"110-004324-2",dv:15},
-  {id:"cf54",d:"ARBA LT",pv:"ARBA",e:"LT",c:"Impuestos",ct:"047-091194-",dv:15},
-  // ARCA / AFIP IMPUESTOS PERSONALES
-  {id:"cf55",d:"Arca vep cargas sociales",pv:"ARCA/AFIP",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf56",d:"Arba Sellos Hugo",pv:"ARBA",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf57",d:"Arba Sellos Loli",pv:"ARBA",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf58",d:"Arba IIBB Hugo",pv:"ARBA",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf59",d:"Arba IIBB Loli",pv:"ARBA",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf60",d:"Arca anual bsps goias Loli",pv:"ARCA",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf61",d:"Arca anticipos goias y bs pers Loli",pv:"ARCA",e:"General",c:"Impuestos",ct:"651202",dv:20},
-  {id:"cf62",d:"Arca anticipos goias y bs pers Hugo",pv:"ARCA",e:"General",c:"Impuestos",ct:"",dv:20},
-  {id:"cf63",d:"Arca anual bs pers Hugo",pv:"ARCA",e:"General",c:"Impuestos",ct:"",dv:20},
-  // SEGUROS
-  {id:"cf64",d:"Complementario Loli",pv:"Seguro",e:"General",c:"Seguros",ct:"",dv:20},
-  {id:"cf65",d:"Complementario Hugo",pv:"Seguro",e:"General",c:"Seguros",ct:"44787",dv:20},
-  // GASTOS BANCARIOS (fin de mes)
-  {id:"cf66",d:"Gastos bancarios Loli",pv:"Banco Frances",e:"General",c:"Gastos bancarios",ct:"",dv:28},
-  {id:"cf67",d:"Gastos bancarios Hugo",pv:"Banco Frances",e:"General",c:"Gastos bancarios",ct:"",dv:28}
+  {id:"cf19",d:"SC Cable wifi",pv:"Cablevision",e:"SC",c:"Cable",ct:"",dv:17},
+  {id:"cf20",d:"LT personal y flow",pv:"Flow",e:"LT",c:"Cable",ct:"100304739771000-5",dv:17},
+  {id:"cf21",d:"EDENOR SC",pv:"EDENOR",e:"SC",c:"Electricidad",ct:"1675713877",dv:15},
+  {id:"cf22",d:"EDENOR RC Panama",pv:"EDENOR",e:"RC",c:"Electricidad",ct:"6122449133",dv:15},
+  {id:"cf23",d:"EDENOR RC",pv:"EDENOR",e:"RC",c:"Electricidad",ct:"2753864187",dv:15},
+  {id:"cf24",d:"EDENOR R1",pv:"EDENOR",e:"R1",c:"Electricidad",ct:"174064S437",dv:15},
+  {id:"cf25",d:"EDENOR R2",pv:"EDENOR",e:"R2",c:"Electricidad",ct:"6914278698",dv:15},
+  {id:"cf26",d:"EDENOR BN",pv:"EDENOR",e:"BN",c:"Electricidad",ct:"1441920426",dv:15},
+  {id:"cf27",d:"EDENOR 1 WT",pv:"EDENOR",e:"WT",c:"Electricidad",ct:"3348321514",dv:15},
+  {id:"cf28",d:"EDENOR 2 WT Galpon",pv:"EDENOR",e:"WT",c:"Electricidad",ct:"2129892138",dv:15},
+  {id:"cf29",d:"EDENOR LT",pv:"EDENOR",e:"LT",c:"Electricidad",ct:"7616030669",dv:15},
+  {id:"cf30",d:"Naturgy WT",pv:"Naturgy",e:"WT",c:"Gas",ct:"416400/3",dv:15},
+  {id:"cf31",d:"Naturgy R1",pv:"Naturgy",e:"R1",c:"Gas",ct:"1564731/6",dv:15},
+  {id:"cf32",d:"Naturgy BN",pv:"Naturgy",e:"BN",c:"Gas",ct:"2531702/7",dv:15},
+  {id:"cf33",d:"Naturgy SC",pv:"Naturgy",e:"SC",c:"Gas",ct:"816834/9",dv:15},
+  {id:"cf34",d:"Naturgy LT",pv:"Naturgy",e:"LT",c:"Gas",ct:"817163/4",dv:15},
+  {id:"cf35",d:"AySA WT",pv:"AySA",e:"WT",c:"Agua",ct:"2239047",dv:15},
+  {id:"cf36",d:"AySA RC",pv:"AySA",e:"RC",c:"Agua",ct:"2250480",dv:15},
+  {id:"cf37",d:"AySA BN",pv:"AySA",e:"BN",c:"Agua",ct:"2007659",dv:15},
+  {id:"cf38",d:"AySA R2",pv:"AySA",e:"R2",c:"Agua",ct:"2250861",dv:15},
+  {id:"cf39",d:"AySA R1",pv:"AySA",e:"R1",c:"Agua",ct:"2242016",dv:15},
+  {id:"cf40",d:"AySA SC",pv:"AySA",e:"SC",c:"Agua",ct:"320245",dv:15},
+  {id:"cf41",d:"AySA LT",pv:"AySA",e:"LT",c:"Agua",ct:"",dv:15},
+  {id:"cf42",d:"Municipal WT",pv:"Municipalidad",e:"WT",c:"Municipal",ct:"530783",dv:15},
+  {id:"cf43",d:"Municipal BN",pv:"Municipalidad",e:"BN",c:"Municipal",ct:"551919",dv:15},
+  {id:"cf44",d:"Municipal RC",pv:"Municipalidad",e:"RC",c:"Municipal",ct:"650840",dv:15},
+  {id:"cf45",d:"Municipal R2",pv:"Municipalidad",e:"R2",c:"Municipal",ct:"533175",dv:15},
+  {id:"cf46",d:"Municipal R1",pv:"Municipalidad",e:"R1",c:"Municipal",ct:"530353",dv:15},
+  {id:"cf47",d:"Municipal LT",pv:"Municipalidad",e:"LT",c:"Municipal",ct:"205848",dv:15},
+  {id:"cf48",d:"Municipal SC",pv:"Municipalidad",e:"SC",c:"Municipal",ct:"30699",dv:15},
+  {id:"cf49",d:"ARBA SC",pv:"ARBA",e:"SC",c:"ARBA",ct:"047-090699-5",dv:15},
+  {id:"cf50",d:"ARBA WT",pv:"ARBA",e:"WT",c:"ARBA",ct:"110-060375-2",dv:15},
+  {id:"cf51",d:"ARBA R1",pv:"ARBA",e:"R1",c:"ARBA",ct:"110-102484-5",dv:15},
+  {id:"cf52",d:"ARBA R2",pv:"ARBA",e:"R2",c:"ARBA",ct:"110-060840-1",dv:15},
+  {id:"cf53",d:"ARBA RC",pv:"ARBA",e:"RC",c:"ARBA",ct:"110-025743-9",dv:15},
+  {id:"cf54",d:"ARBA BN",pv:"ARBA",e:"BN",c:"ARBA",ct:"110-004324-2",dv:15},
+  {id:"cf55",d:"ARBA LT",pv:"ARBA",e:"LT",c:"ARBA",ct:"047-091194-",dv:15},
+  {id:"cf56",d:"Arca vep cargas sociales",pv:"ARCA",e:"General",c:"ARCA",ct:"",dv:20},
+  {id:"cf57",d:"Arba Sellos Hugo",pv:"ARBA",e:"General",c:"ARBA",ct:"",dv:20},
+  {id:"cf58",d:"Arba Sellos Loli",pv:"ARBA",e:"General",c:"ARBA",ct:"",dv:20},
+  {id:"cf59",d:"Arba IIBB Hugo",pv:"ARBA",e:"General",c:"ARBA",ct:"",dv:20},
+  {id:"cf60",d:"Arba IIBB Loli",pv:"ARBA",e:"General",c:"ARBA",ct:"",dv:20},
+  {id:"cf61",d:"Arca anual bsps goias Loli",pv:"ARCA",e:"General",c:"ARCA",ct:"",dv:20},
+  {id:"cf62",d:"Arca anticipos goias y bs pers Loli",pv:"ARCA",e:"General",c:"ARCA",ct:"651202",dv:20},
+  {id:"cf63",d:"Arca anticipos goias y bs pers Hugo",pv:"ARCA",e:"General",c:"ARCA",ct:"",dv:20},
+  {id:"cf64",d:"Arca anual bs pers Hugo",pv:"ARCA",e:"General",c:"ARCA",ct:"",dv:20},
+  {id:"cf65",d:"Complementario Loli",pv:"Seguro",e:"General",c:"Seguros",ct:"",dv:20},
+  {id:"cf66",d:"Complementario Hugo",pv:"Seguro",e:"General",c:"Seguros",ct:"44787",dv:20},
+  {id:"cf67",d:"Gastos bancarios Loli",pv:"Banco",e:"General",c:"Gastos bancarios",ct:"",dv:28},
+  {id:"cf68",d:"Gastos bancarios Hugo",pv:"Banco",e:"General",c:"Gastos bancarios",ct:"",dv:28}
 ];
 
 // helpers
@@ -164,6 +151,12 @@ function fmt(n){return "$"+Number(n||0).toLocaleString("es-AR");}
 function fusd(n,tc){return tc>0?"U$S "+Math.round(n/tc):"--";}
 function hoy(){return new Date().toISOString().split("T")[0];}
 function mes(){return new Date().toISOString().slice(0,7);}
+function fecDisp(s){
+  // Convert YYYY-MM-DD to DD/MM/YY for display
+  if(!s||s.length<10)return s||"--";
+  var p=s.split("-");
+  return p[2]+"/"+p[1]+"/"+p[0].slice(2);
+}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 var _nc=ls("gp_nc",2000);
 function nid(){_nc++;lw("gp_nc",_nc);return String(_nc).padStart(6,"0");}
@@ -661,7 +654,12 @@ function saveRecargo(ckey){
 
 function openNA(){
   var udl=uds().filter(function(u){return !oA(DATA.iq).filter(function(i){return i.unidad===u&&i.estado==="activo";}).length;});
-  var o="<div class='g2'>";
+  var o="<div class='fld' style='grid-column:1/-1;margin-bottom:4px'>";
+  o+="<div style='display:flex;gap:12px;background:#0F172A;padding:10px;border-radius:8px;border:1px solid #334155'>";
+  o+="<label style='display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px'><input type='radio' name='na-modo' id='na-nuevo' checked onchange='toggleModoNA()'> <b>Contrato nuevo</b> (genera cobros de ingreso)</label>";
+  o+="<label style='display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px'><input type='radio' name='na-modo' id='na-vigente' onchange='toggleModoNA()'> <b>Contrato vigente</b> (solo cobra alquiler mensual)</label>";
+  o+="</div></div>";
+  o+="<div class='g2'>";
   o+="<div class='fld' style='grid-column:1/-1'><label class='lbl'>Unidad *</label><select class='inp' id='na-u'><option value=''>Seleccionar...</option>"+udl.map(function(u){return "<option>"+u+"</option>";}).join("")+"</select></div>";
   o+=fld("na-n","Nombre y apellido *")+fld("na-d","DNI *")+fld("na-t","Telefono")+fld("na-e","Email","","email");
   o+=fld("na-ce","Contacto emergencia")+fld("na-te","Tel. emergencia");
@@ -690,6 +688,20 @@ function openNA(){
       var el=G(id); if(el) el.oninput=actualizarResumenNA;
     });
   },100);
+}
+function toggleModoNA(){
+  var vigente=G("na-vigente")&&G("na-vigente").checked;
+  // Hide deposit and gastos fields in vigente mode
+  ["na-dep","na-gs","na-desc-gs","na-pc","na-cuotas-dep","na-cuotas-gs"].forEach(function(id){
+    var el=G(id);
+    if(el){
+      var wrap=el.closest(".fld");
+      if(wrap) wrap.style.display=vigente?"none":"block";
+    }
+  });
+  var info=G("na-vigente-info");
+  if(info) info.style.display=vigente?"block":"none";
+  actualizarResumenNA();
 }
 function actualizarResumenNA(){
   var alq=Number((G("na-alq")||{value:0}).value||0);
@@ -754,15 +766,17 @@ function saveNA(){
     return {monto:monto,pagos:pagos,estado:aplicado>=monto?"pagado":"parcial"};
   }
 
-  // Alquiler primer mes
+  var esVigente=G("na-vigente")&&G("na-vigente").checked;
+
+  // Alquiler primer mes (siempre)
   if(alq>0){
     var ca=aplicarPC(alq);
     DB.ref("cob").push({id_ac:id,unidad:u,inq:n,mes:mesInicio,
       monto_total:ca.monto,sal_ant:0,estado:ca.estado,pagos:ca.pagos,
       concepto:"Alquiler"});
   }
-  // Deposito en cuotas
-  if(dep>0){
+  // Deposito y Gastos: solo en contratos NUEVOS
+  if(!esVigente&&dep>0){
     var cuotaDep=Math.round(dep/cuotasDep);
     for(var cd=0;cd<cuotasDep;cd++){
       var cad=cd===0?aplicarPC(cuotaDep):{monto:cuotaDep,pagos:{},estado:"pendiente"};
@@ -771,8 +785,8 @@ function saveNA(){
         concepto:"Deposito cuota "+(cd+1)+"/"+cuotasDep});
     }
   }
-  // Gastos gestion en cuotas
-  if(gsNeto>0){
+  // Gastos gestion en cuotas (solo contratos nuevos)
+  if(!esVigente&&gsNeto>0){
     var cuotaGs=Math.round(gsNeto/cuotasGs);
     for(var cg=0;cg<cuotasGs;cg++){
       var cag=cg===0?aplicarPC(cuotaGs):{monto:cuotaGs,pagos:{},estado:"pendiente"};
@@ -1031,14 +1045,43 @@ function rAlertas(){
         msg:"Hola "+nom+"! El ajuste cuatrimestral de "+mesAjNombre+": "+fmt(inq.alquiler)+" a "+fmt(nv)+". Aplica desde el dia 1. Adm: 1555787641"});
     }
   });
+  // Contratos que vencen en los proximos 30 dias (para avisar renovacion)
+  iqA.forEach(function(inq){
+    if(!inq.egreso)return;
+    var d=Math.round((new Date(inq.egreso)-h)/86400000);
+    if(d>=0&&d<=30){
+      als.push({l:"Renovacion",c:"#10B981",u:inq.unidad,nom:inq.nombre,tel:inq.tel,
+        msg:"Hola "+inq.nombre.split(",")[0].trim()+"! Tu contrato vence el "+inq.egreso+". Contactanos para gestionar la renovacion. Adm: 1555787641"});
+    }
+  });
   window._als=als;
   var o="<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px'><div><h2 style='font-size:20px;font-weight:800'>Alertas WhatsApp</h2><p style='color:#64748B;font-size:11px'>Dia "+dia+" - "+als.length+" mensajes listos</p></div></div>";
   if(!als.length)o+="<div class='card' style='text-align:center;padding:32px'><p style='color:#10B981;font-weight:700;font-size:18px'>Sin alertas para hoy</p></div>";
   als.forEach(function(a,i){
-    o+="<div class='card' style='border-left:4px solid "+a.c+";margin-bottom:8px'><div style='display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap'><div style='flex:1'>"+bdg(a.l,a.c)+" <b style='font-size:12px;margin-left:6px'>"+a.u+" - "+esc(a.nom)+"</b><div style='background:#0F172A;border-radius:9px;padding:11px;font-size:11px;color:#CBD5E1;white-space:pre-wrap;line-height:1.7;margin-top:8px'>"+esc(a.msg)+"</div><div style='color:#64748B;font-size:9px;margin-top:4px'>"+(a.tel||"--")+"</div></div><div style='display:flex;flex-direction:column;gap:5px;min-width:80px'><button class='btn bp bsm' data-cp='"+i+"'>Copiar</button>"+(a.tel?"<a class='wa' style='font-size:10px;text-align:center;padding:4px 0;display:block' href='https://wa.me/"+a.tel+"?text="+encodeURIComponent(a.msg)+"' target='_blank'>WA</a>":"")+"</div></div></div>";
+    var msgId="msg-"+i;
+    o+="<div class='card' style='border-left:4px solid "+a.c+";margin-bottom:8px'>";
+    o+="<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap'>";
+    o+="<div style='flex:1'>"+bdg(a.l,a.c)+" <b style='font-size:12px;margin-left:6px'>"+a.u+" - "+esc(a.nom)+"</b>";
+    o+="<textarea id='"+msgId+"' style='width:100%;background:#0F172A;border:1px solid #334155;border-radius:9px;padding:11px;font-size:11px;color:#CBD5E1;line-height:1.7;margin-top:8px;min-height:80px;font-family:inherit;resize:vertical'>"+esc(a.msg)+"</textarea>";
+    o+="<div style='color:#64748B;font-size:9px;margin-top:4px'>"+(a.tel||"--")+"</div></div>";
+    o+="<div style='display:flex;flex-direction:column;gap:5px;min-width:80px'>";
+    o+="<button class='btn bp bsm' data-cp='"+i+"'>Copiar</button>";
+    if(a.tel)o+="<a class='wa' style='font-size:10px;text-align:center;padding:4px 0;display:block' href='https://wa.me/"+a.tel+"?text=' id='wa-"+i+"' target='_blank'>WA</a>";
+    o+="</div></div></div>";
   });
   G("main").innerHTML=o;
-  G("main").onclick=function(e){var b=e.target.closest("[data-cp]");if(b)navigator.clipboard.writeText(window._als[parseInt(b.dataset.cp)].msg).then(function(){alert("Copiado");});};
+  G("main").onclick=function(e){
+    var b=e.target.closest("[data-cp]");
+    if(b){
+      var i=parseInt(b.dataset.cp);
+      var ta=G("msg-"+i);
+      var txt=ta?ta.value:window._als[i].msg;
+      navigator.clipboard.writeText(txt).then(function(){alert("Copiado");});
+      // Update WA link with current textarea content
+      var wa=G("wa-"+i);
+      if(wa&&window._als[i].tel) wa.href="https://wa.me/"+window._als[i].tel+"?text="+encodeURIComponent(txt);
+    }
+  };
 }
 
 // AGENDA
@@ -1340,6 +1383,14 @@ function guardarTC(){
 
 function cerrarMes(){
   if(!confirm("Cerrar el mes "+_cajaMes+"? Esta accion es definitiva."))return;
+  // Ask for exchange rate if not set
+  var tcActual=Number(localStorage.getItem("gp_tc_"+_cajaMes)||0);
+  if(!tcActual){
+    var tcInput=prompt("Ingresa el tipo de cambio USD promedio del mes "+_cajaMes+" (ej: 1250):");
+    if(tcInput&&Number(tcInput)>0){
+      localStorage.setItem("gp_tc_"+_cajaMes,tcInput);
+    }
+  }
   var m=_cajaMes;
   var cobM=oA(DATA.cob).filter(function(c){return c.mes===m;});
   var cstM=oA(DATA.cst).filter(function(c){return c.mes===m&&c.pagado;});
@@ -1458,8 +1509,9 @@ function rStats(){
   o+="</div>";
 
   // Por edificio
+  // Stats per building with current month
   o+="<div class='card' style='margin-bottom:10px;overflow-x:auto'>";
-  o+="<h3 style='font-size:13px;font-weight:700;margin-bottom:8px'>Resultado por Edificio — "+m+"</h3>";
+  o+="<h3 style='font-size:13px;font-weight:700;margin-bottom:8px'>Ingresos por Edificio — "+m+(tcVal>0?" (USD: 1=$"+tcVal+")":"")+"</h3>";
   o+="<table class='tbl'><thead><tr><th>Edif.</th><th>Ocup.</th><th>Renta pot.</th><th>Cobrado</th><th>Costos</th><th>Resultado</th><th>USD</th></tr></thead><tbody>";
   Object.keys(ED).forEach(function(cod){
     var inqEd=act.filter(function(i){return i.unidad&&i.unidad.startsWith(cod+"-");});
@@ -1478,6 +1530,22 @@ function rStats(){
   o+="</tbody></table></div>";
 
   // Historial de cierres
+  // Top departments by rent
+  if(act.length){
+    o+="<div class='card' style='margin-bottom:10px;overflow-x:auto'>";
+    o+="<h3 style='font-size:13px;font-weight:700;margin-bottom:8px'>Por Departamento — alquiler actual</h3>";
+    o+="<table class='tbl'><thead><tr><th>Depto</th><th>Inquilino</th><th>Alquiler</th><th>USD</th><th>Vence</th></tr></thead><tbody>";
+    act.sort(function(a,b){return b.alquiler-a.alquiler;}).forEach(function(i){
+      var d=i.egreso?Math.round((new Date(i.egreso)-new Date())/86400000):-1;
+      o+="<tr><td>"+bdg(i.unidad,COL[i.unidad.split('-')[0]]||'#64748B')+"</td>";
+      o+="<td style='font-size:11px'>"+esc(i.nombre.split(',')[0])+"</td>";
+      o+="<td style='color:#10B981;font-weight:600'>"+fmt(i.alquiler)+"</td>";
+      o+="<td style='color:#06B6D4'>"+(tcVal>0?fusd(i.alquiler,tcVal):"--")+"</td>";
+      o+="<td style='color:"+(d>=0&&d<=30?"#F59E0B":"#64748B")+";font-size:10px'>"+(i.egreso||"--")+"</td></tr>";
+    });
+    o+="</tbody></table></div>";
+  }
+
   if(cieA.length){
     o+="<div class='card' style='overflow-x:auto'>";
     o+="<h3 style='font-size:13px;font-weight:700;margin-bottom:8px'>Historial de Resultados Mensuales</h3>";
